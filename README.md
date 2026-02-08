@@ -70,7 +70,7 @@ echo REACT_APP_API_URL=http://localhost:5000/api > .env
 npm start
 ```
 
-## 🔑 Default Credentials
+## 🔑 Default Credentials are there 
 
 ### Admin
 ```
@@ -90,7 +90,7 @@ Email: student@test.com
 Password: student123
 ```
 
-⚠️ **Change these passwords in production!**
+⚠️ **Change these passwords in production!** 
 
 ## 🌐 Usage
 
