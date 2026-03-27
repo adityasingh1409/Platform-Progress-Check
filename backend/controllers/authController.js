@@ -1,150 +1,86 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-// Generate JWT Token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE
-    });
-};
-
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
-exports.register = async (req, res) => {
+// Register User
+export const register = async (req, res) => {
     try {
-        const { name, email, password, role, batch } = req.body;
+        const { username, email, password } = req.body;
+        
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
-        // Check if user exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({
-                success: false,
-                message: 'User already exists with this email'
-            });
-        }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create user
-        const user = await User.create({
-            name,
+        const newUser = new User({
+            username,
             email,
-            password,
-            role: role || 'student',
-            batch: batch || null,
-            isApproved: role === 'admin' ? true : false // Auto-approve admins
+            password: hashedPassword
         });
 
-        // Generate token
-        const token = generateToken(user._id);
+        await newUser.save();
 
-        res.status(201).json({
-            success: true,
-            message: role === 'admin' ? 'Registration successful' : 'Registration successful. Awaiting admin approval.',
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                isApproved: user.isApproved,
-                batch: user.batch
-            }
-        });
+        res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
-exports.login = async (req, res) => {
+// Login User
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-        // Validate email & password
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide email and password'
-            });
-        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        // Check for user
-        const user = await User.findOne({ email }).select('+password');
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Check if password matches
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Check if user is approved (except for admin)
-        if (!user.isApproved && user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Your account is pending approval from admin'
-            });
-        }
-
-        // Generate token
-        const token = generateToken(user._id);
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
         res.status(200).json({
-            success: true,
-            message: 'Login successful',
             token,
             user: {
                 id: user._id,
-                name: user.name,
+                username: user.username,
                 email: user.email,
-                role: user.role,
-                isApproved: user.isApproved,
-                batch: user.batch
+                platforms: user.platforms
             }
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
-// @access  Private
-exports.getMe = async (req, res) => {
+// Update Platforms
+export const updatePlatforms = async (req, res) => {
     try {
+        const { leetcode, gfg, hackerrank } = req.body;
+        
         const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-        res.status(200).json({
-            success: true,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                isApproved: user.isApproved,
-                batch: user.batch
-            }
-        });
+        if (leetcode !== undefined) user.platforms.leetcode = leetcode;
+        if (gfg !== undefined) user.platforms.gfg = gfg;
+        if (hackerrank !== undefined) user.platforms.hackerrank = hackerrank;
+
+        await user.save();
+        res.status(200).json({ message: 'Platforms updated', platforms: user.platforms });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get User Profile
+export const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
 };

@@ -1,67 +1,22 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const progressSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    platform: {
-        type: String,
-        enum: ['leetcode', 'hackerrank', 'geeksforgeeks'],
-        required: true
-    },
-    totalSolved: {
-        type: Number,
-        default: 0
-    },
-    easySolved: {
-        type: Number,
-        default: 0
-    },
-    mediumSolved: {
-        type: Number,
-        default: 0
-    },
-    hardSolved: {
-        type: Number,
-        default: 0
-    },
-    ranking: {
-        type: Number,
-        default: null
-    },
-    streak: {
-        type: Number,
-        default: 0
-    },
-    acceptanceRate: {
-        type: Number,
-        default: 0
-    },
-    reputation: {
-        type: Number,
-        default: 0
-    },
-    badges: [{
-        name: String,
-        count: Number
-    }],
-    recentSubmissions: [{
-        title: String,
-        difficulty: String,
-        timestamp: Date,
-        status: String
-    }],
-    lastScraped: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    timestamps: true
-});
+const ProgressSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  date: {
+    type: String, // YYYY-MM-DD format
+    required: true
+  },
+  leetcodeSolved: { type: Number, default: 0 },
+  gfgSolved: { type: Number, default: 0 },
+  hackerrankSolved: { type: Number, default: 0 },
+  totalSolved: { type: Number, default: 0 }
+}, { timestamps: true });
 
-// Compound index for efficient queries
-progressSchema.index({ user: 1, platform: 1 }, { unique: true });
+// Ensure unique entry per user per day
+ProgressSchema.index({ user: 1, date: 1 }, { unique: true });
 
-module.exports = mongoose.model('Progress', progressSchema);
+export default mongoose.model('Progress', ProgressSchema);
