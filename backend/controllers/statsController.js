@@ -1,34 +1,34 @@
 import Progress from '../models/Progress.js';
 import User from '../models/User.js';
-import { fetchLeetcodeStats, fetchGFGStats, fetchHackerrankStats } from '../utils/scrapers.js';
+import { fetchLeetcodeStats } from '../utils/scrapers.js';
 
 export const syncStats = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const leetcodeSolved = await fetchLeetcodeStats(user.platforms?.leetcode);
-        const gfgSolved = await fetchGFGStats(user.platforms?.gfg);
-        const hackerrankSolved = await fetchHackerrankStats(user.platforms?.hackerrank);
+        const leetcodeStats = await fetchLeetcodeStats(user.platforms?.leetcode);
 
-        const totalSolved = leetcodeSolved + gfgSolved + hackerrankSolved;
+        const totalSolved = leetcodeStats.total;
 
         const today = new Date().toISOString().split('T')[0];
 
         let progress = await Progress.findOne({ user: user._id, date: today });
         if (progress) {
-            progress.leetcodeSolved = leetcodeSolved;
-            progress.gfgSolved = gfgSolved;
-            progress.hackerrankSolved = hackerrankSolved;
+            progress.leetcodeTotal = leetcodeStats.total;
+            progress.leetcodeEasy = leetcodeStats.easy;
+            progress.leetcodeMedium = leetcodeStats.medium;
+            progress.leetcodeHard = leetcodeStats.hard;
             progress.totalSolved = totalSolved;
             await progress.save();
         } else {
             progress = new Progress({
                 user: user._id,
                 date: today,
-                leetcodeSolved,
-                gfgSolved,
-                hackerrankSolved,
+                leetcodeTotal: leetcodeStats.total,
+                leetcodeEasy: leetcodeStats.easy,
+                leetcodeMedium: leetcodeStats.medium,
+                leetcodeHard: leetcodeStats.hard,
                 totalSolved
             });
             await progress.save();
@@ -47,15 +47,23 @@ export const syncStats = async (req, res) => {
 
 export const getLeaderboard = async (req, res) => {
     try {
-        // Find users sorted by consistencyScore and total solved dynamically or from daily max
         const users = await User.find().select('username consistencyScore').sort({ consistencyScore: -1 }).limit(20);
-        
-        // Populate today's progress to get the total solved count for leaderboard
         const today = new Date().toISOString().split('T')[0];
         const progressList = await Progress.find({ date: today }).populate('user', 'username consistencyScore');
 
-        // Let's rely on consistency and fallback to some DB stats
-        res.status(200).json({ leaderboard: users, progress: progressList });
+        // Merge total solved dynamically from today's progress document into the user payload
+        const formattedLeaderboard = users.map(u => {
+            const p = progressList.find(prog => prog.user._id.toString() === u._id.toString());
+            return {
+                ...u._doc,
+                totalProblemCount: p ? p.totalSolved : 0
+            };
+        });
+
+        // Re-sort by total problem count implicitly or just leave consistency
+        formattedLeaderboard.sort((a, b) => b.totalProblemCount - a.totalProblemCount || b.consistencyScore - a.consistencyScore);
+
+        res.status(200).json({ leaderboard: formattedLeaderboard, progress: progressList });
     } catch (error) {
         res.status(500).json({ message: 'Server error Fetching leaderboard' });
     }

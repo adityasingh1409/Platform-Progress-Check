@@ -3,9 +3,7 @@ import axios from 'axios';
 
 export default function Profile() {
   const [platforms, setPlatforms] = useState({
-    leetcode: '',
-    gfg: '',
-    hackerrank: ''
+    leetcode: ''
   });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -16,12 +14,10 @@ export default function Profile() {
       try {
         const token = localStorage.getItem('token');
         const res = await axios.get('http://localhost:5000/api/auth/profile', {
-          headers: { Authorization: `Bearer \${token}` }
+          headers: { Authorization: `Bearer ${token}` }
         });
         setPlatforms({
-          leetcode: res.data.platforms?.leetcode || '',
-          gfg: res.data.platforms?.gfg || '',
-          hackerrank: res.data.platforms?.hackerrank || ''
+          leetcode: res.data.platforms?.leetcode || ''
         });
       } catch (err) {
         setError('Failed to fetch profile.');
@@ -37,15 +33,16 @@ export default function Profile() {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.put('http://localhost:5000/api/auth/platforms', platforms, {
-        headers: { Authorization: `Bearer \${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       setMessage('Profile updated successfully!');
       setTimeout(() => setMessage(''), 3000);
-      
-      const user = JSON.parse(localStorage.getItem('user'));
+      const userStr = localStorage.getItem('user');
+      const user = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : {};
       localStorage.setItem('user', JSON.stringify({ ...user, platforms: res.data.platforms }));
     } catch (err) {
-      setError('Update failed.');
+      console.error('Update platforms error:', err);
+      setError(err.response?.data?.message || err.message || 'Update failed.');
       setTimeout(() => setError(''), 3000);
     }
   };
@@ -64,33 +61,13 @@ export default function Profile() {
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">LeetCode Username</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">LeetCode Profile Link</label>
             <input
               type="text"
               className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-600 text-white"
-              placeholder="e.g. aditya123"
+              placeholder="e.g. https://leetcode.com/u/dev_ninja/"
               value={platforms.leetcode}
               onChange={(e) => setPlatforms({ ...platforms, leetcode: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">GeeksForGeeks Username</label>
-            <input
-              type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-600 text-white"
-              placeholder="e.g. dev_coder"
-              value={platforms.gfg}
-              onChange={(e) => setPlatforms({ ...platforms, gfg: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">HackerRank Username</label>
-            <input
-              type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-600 text-white"
-              placeholder="e.g. hack_master"
-              value={platforms.hackerrank}
-              onChange={(e) => setPlatforms({ ...platforms, hackerrank: e.target.value })}
             />
           </div>
 

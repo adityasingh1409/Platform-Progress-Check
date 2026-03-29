@@ -15,7 +15,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post('http://localhost:5000/api/stats/sync', {}, {
-        headers: { Authorization: `Bearer \${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       setStats(res.data.progress);
       setScore(res.data.consistencyScore);
@@ -31,23 +31,23 @@ export default function Dashboard() {
   }, []);
 
   const chartData = {
-    labels: ['LeetCode', 'GeeksForGeeks', 'HackerRank'],
+    labels: ['Easy', 'Medium', 'Hard'],
     datasets: [
       {
         data: [
-          stats?.leetcodeSolved || 0,
-          stats?.gfgSolved || 0,
-          stats?.hackerrankSolved || 0
+          stats?.leetcodeEasy || 0,
+          stats?.leetcodeMedium || 0,
+          stats?.leetcodeHard || 0
         ],
         backgroundColor: [
-          'rgba(255, 172, 28, 0.8)', // LeetCode Orange
-          'rgba(47, 141, 70, 0.8)',  // GFG Green
-          'rgba(46, 200, 102, 0.8)'  // HR Green
+          'rgba(46, 200, 102, 0.8)', // Easy Green
+          'rgba(255, 172, 28, 0.8)', // Medium Orange
+          'rgba(239, 68, 68, 0.8)'   // Hard Red
         ],
         borderColor: [
+          'rgba(46, 200, 102, 1)',
           'rgba(255, 172, 28, 1)',
-          'rgba(47, 141, 70, 1)',
-          'rgba(46, 200, 102, 1)'
+          'rgba(239, 68, 68, 1)'
         ],
         borderWidth: 1,
       },
@@ -76,16 +76,17 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {[ 
-          { name: 'LeetCode', val: stats?.leetcodeSolved || 0, color: 'text-orange-400' },
-          { name: 'GeeksForGeeks', val: stats?.gfgSolved || 0, color: 'text-green-500' },
-          { name: 'HackerRank (Approx. from badges)', val: stats?.hackerrankSolved || 0, color: 'text-emerald-400' }
-        ].map((platform) => (
-          <div key={platform.name} className="bg-darkCard p-6 rounded-2xl border border-gray-800 shadow-xl hover:border-gray-700 transition-all flex flex-col justify-center items-center">
-            <h3 className="text-gray-400 text-sm font-semibold tracking-wider uppercase mb-2">{platform.name}</h3>
-            <p className={`text-5xl font-extrabold \${platform.color}`}>
-              {platform.val}
+          { name: 'Total Solved', val: stats?.leetcodeTotal || 0, color: 'text-white' },
+          { name: 'Easy', val: stats?.leetcodeEasy || 0, color: 'text-green-400' },
+          { name: 'Medium', val: stats?.leetcodeMedium || 0, color: 'text-orange-400' },
+          { name: 'Hard', val: stats?.leetcodeHard || 0, color: 'text-red-500' }
+        ].map((diff) => (
+          <div key={diff.name} className="bg-darkCard p-6 rounded-2xl border border-gray-800 shadow-xl hover:border-gray-700 transition-all flex flex-col justify-center items-center">
+            <h3 className="text-gray-400 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">{diff.name}</h3>
+            <p className={`text-4xl font-extrabold \${diff.color}`}>
+              {diff.val}
             </p>
           </div>
         ))}

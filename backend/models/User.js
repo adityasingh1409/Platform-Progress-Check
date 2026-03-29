@@ -16,9 +16,7 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   platforms: {
-    leetcode: { type: String, default: '' },
-    gfg: { type: String, default: '' },
-    hackerrank: { type: String, default: '' }
+    leetcode: { type: String, default: '' }
   },
   consistencyScore: {
     type: Number,

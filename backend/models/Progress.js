@@ -10,9 +10,10 @@ const ProgressSchema = new mongoose.Schema({
     type: String, // YYYY-MM-DD format
     required: true
   },
-  leetcodeSolved: { type: Number, default: 0 },
-  gfgSolved: { type: Number, default: 0 },
-  hackerrankSolved: { type: Number, default: 0 },
+  leetcodeTotal: { type: Number, default: 0 },
+  leetcodeEasy: { type: Number, default: 0 },
+  leetcodeMedium: { type: Number, default: 0 },
+  leetcodeHard: { type: Number, default: 0 },
   totalSolved: { type: Number, default: 0 }
 }, { timestamps: true });
 
