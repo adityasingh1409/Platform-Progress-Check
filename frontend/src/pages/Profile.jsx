@@ -3,7 +3,9 @@ import axios from 'axios';
 
 export default function Profile() {
   const [platforms, setPlatforms] = useState({
-    leetcode: ''
+    leetcode: '',
+    gfg: '',
+    hackerrank: ''
   });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -17,7 +19,9 @@ export default function Profile() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPlatforms({
-          leetcode: res.data.platforms?.leetcode || ''
+          leetcode: res.data.platforms?.leetcode || '',
+          gfg: res.data.platforms?.gfg || '',
+          hackerrank: res.data.platforms?.hackerrank || ''
         });
       } catch (err) {
         setError('Failed to fetch profile.');
@@ -68,6 +72,28 @@ export default function Profile() {
               placeholder="e.g. https://leetcode.com/u/dev_ninja/"
               value={platforms.leetcode}
               onChange={(e) => setPlatforms({ ...platforms, leetcode: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">GeeksForGeeks Profile Link</label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-600 text-white"
+              placeholder="e.g. https://auth.geeksforgeeks.org/user/dev_ninja/"
+              value={platforms.gfg}
+              onChange={(e) => setPlatforms({ ...platforms, gfg: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">HackerRank Profile Link</label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-600 text-white"
+              placeholder="e.g. https://www.hackerrank.com/profile/dev_ninja"
+              value={platforms.hackerrank}
+              onChange={(e) => setPlatforms({ ...platforms, hackerrank: e.target.value })}
             />
           </div>
 

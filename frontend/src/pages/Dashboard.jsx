@@ -35,9 +35,9 @@ export default function Dashboard() {
     datasets: [
       {
         data: [
-          stats?.leetcodeEasy || 0,
-          stats?.leetcodeMedium || 0,
-          stats?.leetcodeHard || 0
+          (stats?.leetcodeEasy || 0) + (stats?.gfgEasy || 0) + (stats?.hackerrankEasy || 0),
+          (stats?.leetcodeMedium || 0) + (stats?.gfgMedium || 0) + (stats?.hackerrankMedium || 0),
+          (stats?.leetcodeHard || 0) + (stats?.gfgHard || 0) + (stats?.hackerrankHard || 0)
         ],
         backgroundColor: [
           'rgba(46, 200, 102, 0.8)', // Easy Green
@@ -78,10 +78,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {[ 
-          { name: 'Total Solved', val: stats?.leetcodeTotal || 0, color: 'text-white' },
-          { name: 'Easy', val: stats?.leetcodeEasy || 0, color: 'text-green-400' },
-          { name: 'Medium', val: stats?.leetcodeMedium || 0, color: 'text-orange-400' },
-          { name: 'Hard', val: stats?.leetcodeHard || 0, color: 'text-red-500' }
+          { name: 'Total Solved', val: stats?.totalSolved || 0, color: 'text-white' },
+          { name: 'Easy', val: (stats?.leetcodeEasy || 0) + (stats?.gfgEasy || 0) + (stats?.hackerrankEasy || 0), color: 'text-green-400' },
+          { name: 'Medium', val: (stats?.leetcodeMedium || 0) + (stats?.gfgMedium || 0) + (stats?.hackerrankMedium || 0), color: 'text-orange-400' },
+          { name: 'Hard', val: (stats?.leetcodeHard || 0) + (stats?.gfgHard || 0) + (stats?.hackerrankHard || 0), color: 'text-red-500' }
         ].map((diff) => (
           <div key={diff.name} className="bg-darkCard p-6 rounded-2xl border border-gray-800 shadow-xl hover:border-gray-700 transition-all flex flex-col justify-center items-center">
             <h3 className="text-gray-400 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">{diff.name}</h3>

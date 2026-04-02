@@ -57,12 +57,16 @@ export const login = async (req, res) => {
 // Update Platforms
 export const updatePlatforms = async (req, res) => {
     try {
-        const { leetcode } = req.body;
+        const { leetcode, gfg, hackerrank } = req.body;
         
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
-        if (leetcode !== undefined) {
-            user.set('platforms.leetcode', leetcode);
+        
+        if (leetcode !== undefined) user.set('platforms.leetcode', leetcode);
+        if (gfg !== undefined) user.set('platforms.gfg', gfg);
+        if (hackerrank !== undefined) user.set('platforms.hackerrank', hackerrank);
+        
+        if (leetcode !== undefined || gfg !== undefined || hackerrank !== undefined) {
             user.markModified('platforms');
         }
 

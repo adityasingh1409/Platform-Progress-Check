@@ -10,7 +10,7 @@ A modern, full-stack application built for students and developers to track thei
 - **Data Fetching/Scraping**: 
    - Uses LeetCode GraphQL API for LeetCode Stats.
    - Uses Cheerio to scrape GeeksForGeeks.
-   - Uses Axios to fetch HackerRank badges for approximation.
+   - Uses Axios to fetch HackerRank badges for approximation.....
 
 ## Folder Structure
 

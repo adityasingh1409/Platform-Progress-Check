@@ -1,6 +1,6 @@
 import Progress from '../models/Progress.js';
 import User from '../models/User.js';
-import { fetchLeetcodeStats } from '../utils/scrapers.js';
+import { fetchLeetcodeStats, fetchGfgStats, fetchHackerrankStats } from '../utils/scrapers.js';
 
 export const syncStats = async (req, res) => {
     try {
@@ -8,8 +8,10 @@ export const syncStats = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         const leetcodeStats = await fetchLeetcodeStats(user.platforms?.leetcode);
+        const gfgStats = await fetchGfgStats(user.platforms?.gfg);
+        const hackerrankStats = await fetchHackerrankStats(user.platforms?.hackerrank);
 
-        const totalSolved = leetcodeStats.total;
+        const totalSolved = leetcodeStats.total + gfgStats.total + hackerrankStats.total;
 
         const today = new Date().toISOString().split('T')[0];
 
@@ -19,6 +21,17 @@ export const syncStats = async (req, res) => {
             progress.leetcodeEasy = leetcodeStats.easy;
             progress.leetcodeMedium = leetcodeStats.medium;
             progress.leetcodeHard = leetcodeStats.hard;
+            
+            progress.gfgTotal = gfgStats.total;
+            progress.gfgEasy = gfgStats.easy;
+            progress.gfgMedium = gfgStats.medium;
+            progress.gfgHard = gfgStats.hard;
+            
+            progress.hackerrankTotal = hackerrankStats.total;
+            progress.hackerrankEasy = hackerrankStats.easy;
+            progress.hackerrankMedium = hackerrankStats.medium;
+            progress.hackerrankHard = hackerrankStats.hard;
+            
             progress.totalSolved = totalSolved;
             await progress.save();
         } else {
@@ -29,6 +42,14 @@ export const syncStats = async (req, res) => {
                 leetcodeEasy: leetcodeStats.easy,
                 leetcodeMedium: leetcodeStats.medium,
                 leetcodeHard: leetcodeStats.hard,
+                gfgTotal: gfgStats.total,
+                gfgEasy: gfgStats.easy,
+                gfgMedium: gfgStats.medium,
+                gfgHard: gfgStats.hard,
+                hackerrankTotal: hackerrankStats.total,
+                hackerrankEasy: hackerrankStats.easy,
+                hackerrankMedium: hackerrankStats.medium,
+                hackerrankHard: hackerrankStats.hard,
                 totalSolved
             });
             await progress.save();

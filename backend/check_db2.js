@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import User from './models/User.js';
 import Progress from './models/Progress.js';
 import dotenv from 'dotenv';
-import { fetchLeetcodeStats } from './utils/scrapers.js';
+import { fetchLeetcodeStats, fetchGfgStats, fetchHackerrankStats } from './utils/scrapers.js';
 dotenv.config();
 
 async function checkOldSync() {
@@ -12,10 +12,13 @@ async function checkOldSync() {
     
     // Attempt sync for everyone
     for (const u of users) {
-        if (!u.platforms || !u.platforms.leetcode) continue;
-        console.log(`Syncing user: ${u.username || 'unknown'} with leetcode: ${u.platforms.leetcode}`);
+        if (!u.platforms) continue;
+        console.log(`Syncing user: ${u.username || 'unknown'}`);
         try {
             const leetcodeStats = await fetchLeetcodeStats(u.platforms.leetcode);
+            const gfgStats = await fetchGfgStats(u.platforms.gfg);
+            const hackerrankStats = await fetchHackerrankStats(u.platforms.hackerrank);
+            const totalSolved = leetcodeStats.total + gfgStats.total + hackerrankStats.total;
             const today = new Date().toISOString().split('T')[0];
 
             let progress = await Progress.findOne({ user: u._id, date: today });
@@ -24,7 +27,15 @@ async function checkOldSync() {
                 progress.leetcodeEasy = leetcodeStats.easy;
                 progress.leetcodeMedium = leetcodeStats.medium;
                 progress.leetcodeHard = leetcodeStats.hard;
-                progress.totalSolved = leetcodeStats.total;
+                progress.gfgTotal = gfgStats.total;
+                progress.gfgEasy = gfgStats.easy;
+                progress.gfgMedium = gfgStats.medium;
+                progress.gfgHard = gfgStats.hard;
+                progress.hackerrankTotal = hackerrankStats.total;
+                progress.hackerrankEasy = hackerrankStats.easy;
+                progress.hackerrankMedium = hackerrankStats.medium;
+                progress.hackerrankHard = hackerrankStats.hard;
+                progress.totalSolved = totalSolved;
                 await progress.save();
                 console.log(`Updated old progress for ${u.username || 'unknown'}.`);
             } else {
@@ -35,7 +46,15 @@ async function checkOldSync() {
                     leetcodeEasy: leetcodeStats.easy,
                     leetcodeMedium: leetcodeStats.medium,
                     leetcodeHard: leetcodeStats.hard,
-                    totalSolved: leetcodeStats.total
+                    gfgTotal: gfgStats.total,
+                    gfgEasy: gfgStats.easy,
+                    gfgMedium: gfgStats.medium,
+                    gfgHard: gfgStats.hard,
+                    hackerrankTotal: hackerrankStats.total,
+                    hackerrankEasy: hackerrankStats.easy,
+                    hackerrankMedium: hackerrankStats.medium,
+                    hackerrankHard: hackerrankStats.hard,
+                    totalSolved: totalSolved
                 });
                 await progress.save();
                 console.log(`Created new progress for ${u.username || 'unknown'}.`);
