@@ -28,7 +28,7 @@ export default function Leaderboard() {
       </h1>
       <p className="text-gray-400 text-center mb-10">Top users globally.</p>
       
-      <div className="bg-darkCard rounded-2xl border border-gray-800 shadow-xl overflow-hidden">
+      <div className="bg-darkCard/80 backdrop-blur-md rounded-2xl border border-gray-800 shadow-xl overflow-hidden hover:shadow-[0_10px_30px_-10px_rgba(59,130,246,0.2)] transition-all duration-300">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-800/50 text-gray-400 text-sm uppercase tracking-wider">
@@ -38,22 +38,22 @@ export default function Leaderboard() {
               <th className="px-6 py-4 text-right font-medium">Consistency</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody className="divide-y divide-gray-800 hidden md:table-row-group" style={{display: 'table-row-group'}}>
             {users.map((u, i) => (
-              <tr key={u._id} className="hover:bg-gray-800/20 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {i === 0 ? <span className="text-2xl">🥇</span> : 
-                   i === 1 ? <span className="text-2xl">🥈</span> : 
-                   i === 2 ? <span className="text-2xl">🥉</span> : 
-                   <span className="text-gray-500 font-bold px-2">{i + 1}</span>}
+              <tr key={u._id} className="group hover:bg-gray-800/40 hover:scale-[1.01] transition-all duration-300 cursor-pointer">
+                <td className="px-6 py-4 whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1">
+                  {i === 0 ? <span className="text-2xl drop-shadow-md">🥇</span> : 
+                   i === 1 ? <span className="text-2xl drop-shadow-md">🥈</span> : 
+                   i === 2 ? <span className="text-2xl drop-shadow-md">🥉</span> : 
+                   <span className="text-gray-500 font-bold px-2 group-hover:text-white transition-colors">{i + 1}</span>}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-white font-medium">
+                <td className="px-6 py-4 whitespace-nowrap text-white font-medium group-hover:text-accentCyan transition-colors duration-300">
                   {u.username}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-green-400">
+                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-green-400 group-hover:text-green-300 transition-colors">
                   {u.totalProblemCount || 0}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-accentCyan">
+                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-accentCyan group-hover:shadow-[0_0_10px_rgba(34,211,238,0.5)] group-hover:text-white transition-all rounded-md">
                   {u.consistencyScore}
                 </td>
               </tr>

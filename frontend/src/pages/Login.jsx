@@ -34,23 +34,23 @@ export default function Login() {
         {error && <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-500/20 rounded-md text-center">{error}</div>}
 
         <form className="space-y-6" onSubmit={handleLogin}>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+          <div className="group">
+            <label className="block text-sm font-medium text-gray-300 mb-1 group-focus-within:text-accentCyan transition-colors">Email</label>
             <input
               type="email"
               required
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-500 text-white"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all duration-300 placeholder-gray-500 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(59,130,246,0.3)]"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+          <div className="group">
+            <label className="block text-sm font-medium text-gray-300 mb-1 group-focus-within:text-accentCyan transition-colors">Password</label>
             <input
               type="password"
               required
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all placeholder-gray-500 text-white"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all duration-300 placeholder-gray-500 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(59,130,246,0.3)]"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -58,7 +58,7 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-primaryBlue to-accentCyan hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-darkBg focus:ring-primaryBlue transition-all transform hover:scale-[1.02]"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-primaryBlue to-accentCyan hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-darkBg focus:ring-primaryBlue transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] active:scale-95"
           >
             Sign In
           </button>

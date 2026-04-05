@@ -66,12 +66,15 @@ export default function Dashboard() {
         <button
           onClick={fetchStats}
           disabled={loading}
-          className="px-6 py-2 bg-gradient-to-r from-primaryBlue to-accentCyan text-white rounded-lg shadow-lg hover:shadow-cyan-500/25 transition-all transform hover:-translate-y-1 disabled:opacity-50 flex items-center gap-2"
+          className="group px-6 py-2 bg-gradient-to-r from-primaryBlue to-accentCyan text-white rounded-lg shadow-lg hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:-translate-y-0 flex items-center gap-2 active:scale-95"
         >
           {loading ? (
              <span className="animate-spin text-xl">↻</span>
           ) : (
-             <span>Sync Daily Progress</span>
+             <>
+               <span className="group-hover:rotate-180 transition-transform duration-500">↻</span>
+               <span>Sync Daily Progress</span>
+             </>
           )}
         </button>
       </div>
@@ -83,9 +86,9 @@ export default function Dashboard() {
           { name: 'Medium', val: (stats?.leetcodeMedium || 0) + (stats?.gfgMedium || 0) + (stats?.hackerrankMedium || 0), color: 'text-orange-400' },
           { name: 'Hard', val: (stats?.leetcodeHard || 0) + (stats?.gfgHard || 0) + (stats?.hackerrankHard || 0), color: 'text-red-500' }
         ].map((diff) => (
-          <div key={diff.name} className="bg-darkCard p-6 rounded-2xl border border-gray-800 shadow-xl hover:border-gray-700 transition-all flex flex-col justify-center items-center">
-            <h3 className="text-gray-400 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">{diff.name}</h3>
-            <p className={`text-4xl font-extrabold \${diff.color}`}>
+          <div key={diff.name} className="group bg-darkCard/80 backdrop-blur-md p-6 rounded-2xl border border-gray-800 shadow-xl hover:border-gray-600 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.2)] flex flex-col justify-center items-center cursor-default">
+            <h3 className="text-gray-400 group-hover:text-gray-200 transition-colors duration-300 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">{diff.name}</h3>
+            <p className={`text-4xl font-extrabold transition-transform duration-300 group-hover:scale-110 \${diff.color}`}>
               {diff.val}
             </p>
           </div>
@@ -93,9 +96,9 @@ export default function Dashboard() {
       </div>
 
       {stats?.totalSolved > 0 ? (
-        <div className="bg-darkCard p-8 rounded-2xl border border-gray-800 shadow-xl max-w-lg mx-auto flex flex-col items-center">
-          <h2 className="text-xl font-bold text-white mb-6">Problems Distribution</h2>
-          <div className="w-64 h-64">
+        <div className="group bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-800 shadow-xl hover:shadow-[0_10px_40px_-10px_rgba(59,130,246,0.3)] transition-all duration-500 hover:-translate-y-1 max-w-lg mx-auto flex flex-col items-center">
+          <h2 className="text-xl font-bold text-white mb-6 group-hover:text-accentCyan transition-colors duration-300">Problems Distribution</h2>
+          <div className="w-64 h-64 transition-transform duration-500 group-hover:scale-105">
              <Doughnut data={chartData} options={{ maintainAspectRatio: false }} />
           </div>
         </div>
