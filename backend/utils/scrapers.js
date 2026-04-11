@@ -91,8 +91,20 @@ export const fetchHackerrankStats = async (profileUrl) => {
     const defaultStats = { total: 0, easy: 0, medium: 0, hard: 0 };
     if (!username) return defaultStats;
     try {
-        // Fallback for hackerrank, real scraping requires API key or puppeteer 
-        return defaultStats;
+        const response = await axios.get(`https://www.hackerrank.com/rest/hackers/${username}/badges`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
+        
+        let total = 0;
+        if (response.data && response.data.models) {
+            response.data.models.forEach(badge => {
+                total += (badge.solved || 0);
+            });
+        }
+        
+        return { total, easy: 0, medium: 0, hard: 0 };
     } catch (err) {
         console.error('HackerRank fetch error:', err.message);
         return defaultStats;
