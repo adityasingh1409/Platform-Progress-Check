@@ -55,8 +55,8 @@ export default function Profile() {
 
   return (
     <div className="flex justify-center mt-16 px-4">
-      <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl shadow-xl w-full max-w-lg border border-gray-800 hover:shadow-[0_10px_40px_-10px_rgba(59,130,246,0.2)] transition-all duration-300 transform hover:-translate-y-1">
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primaryBlue to-accentCyan mb-6 text-center transition-all duration-300 hover:scale-105 hover:tracking-wide">
+      <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl shadow-xl w-full max-w-lg border border-gray-800 hover:shadow-[0_10px_40px_-10px_rgba(44,187,93,0.2)] transition-all duration-300 transform hover:-translate-y-1">
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brandPrimary to-brandAccent mb-6 text-center transition-all duration-300 hover:scale-105 hover:tracking-wide">
           Update Profile
         </h2>
         
@@ -65,10 +65,10 @@ export default function Profile() {
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div className="group">
-            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-accentCyan transition-colors">LeetCode Profile Link</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-brandAccent transition-colors">LeetCode Profile Link</label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(59,130,246,0.3)]"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
               placeholder="e.g. https://leetcode.com/u/dev_ninja/"
               value={platforms.leetcode}
               onChange={(e) => setPlatforms({ ...platforms, leetcode: e.target.value })}
@@ -76,10 +76,10 @@ export default function Profile() {
           </div>
 
           <div className="group">
-            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-accentCyan transition-colors">GeeksForGeeks Profile Link</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-brandAccent transition-colors">GeeksForGeeks Profile Link</label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(59,130,246,0.3)]"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
               placeholder="e.g. https://auth.geeksforgeeks.org/user/dev_ninja/"
               value={platforms.gfg}
               onChange={(e) => setPlatforms({ ...platforms, gfg: e.target.value })}
@@ -87,10 +87,10 @@ export default function Profile() {
           </div>
 
           <div className="group">
-            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-accentCyan transition-colors">HackerRank Profile Link</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-brandAccent transition-colors">HackerRank Profile Link</label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primaryBlue focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(59,130,246,0.3)]"
+              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
               placeholder="e.g. https://www.hackerrank.com/profile/dev_ninja"
               value={platforms.hackerrank}
               onChange={(e) => setPlatforms({ ...platforms, hackerrank: e.target.value })}
@@ -99,7 +99,7 @@ export default function Profile() {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-primaryBlue to-accentCyan hover:from-blue-600 hover:to-cyan-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] active:scale-95"
+            className="w-full py-3 px-4 rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-brandPrimary to-brandAccent hover:from-green-600 hover:to-orange-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,161,22,0.4)] active:scale-95"
           >
             Save Changes
           </button>

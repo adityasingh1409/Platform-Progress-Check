@@ -23,12 +23,12 @@ export default function Leaderboard() {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primaryBlue to-accentCyan mb-2 text-center">
+      <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brandPrimary to-brandAccent mb-2 text-center">
         Global Leaderboard
       </h1>
       <p className="text-gray-400 text-center mb-10">Top users globally.</p>
       
-      <div className="bg-darkCard/80 backdrop-blur-md rounded-2xl border border-gray-800 shadow-xl overflow-hidden hover:shadow-[0_10px_30px_-10px_rgba(59,130,246,0.2)] transition-all duration-300">
+      <div className="bg-darkCard/80 backdrop-blur-md rounded-2xl border border-gray-800 shadow-xl overflow-hidden hover:shadow-[0_10px_30px_-10px_rgba(44,187,93,0.2)] transition-all duration-300">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-800/50 text-gray-400 text-sm uppercase tracking-wider">
@@ -47,13 +47,13 @@ export default function Leaderboard() {
                    i === 2 ? <span className="text-2xl drop-shadow-md">🥉</span> : 
                    <span className="text-gray-500 font-bold px-2 group-hover:text-white transition-colors">{i + 1}</span>}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-white font-medium group-hover:text-accentCyan transition-colors duration-300">
+                <td className="px-6 py-4 whitespace-nowrap text-white font-medium group-hover:text-brandAccent transition-colors duration-300">
                   {u.username}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-green-400 group-hover:text-green-300 transition-colors">
                   {u.totalProblemCount || 0}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-accentCyan group-hover:shadow-[0_0_10px_rgba(34,211,238,0.5)] group-hover:text-white transition-all rounded-md">
+                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-brandAccent group-hover:shadow-[0_0_10px_rgba(255,161,22,0.5)] group-hover:text-white transition-all rounded-md">
                   {u.consistencyScore}
                 </td>
               </tr>

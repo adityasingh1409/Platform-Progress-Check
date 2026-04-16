@@ -21,10 +21,10 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2 group cursor-pointer">
-            <div className="w-8 h-8 rounded bg-gradient-to-tr from-primaryBlue to-accentCyan flex items-center justify-center text-white font-bold text-xl transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 shadow-lg group-hover:shadow-primaryBlue/50">
+            <div className="w-8 h-8 rounded bg-gradient-to-tr from-brandPrimary to-brandAccent flex items-center justify-center text-white font-bold text-xl transition-all duration-300 group-hover:rotate-12 group-hover:scale-110 shadow-lg group-hover:shadow-brandPrimary/50">
               P
             </div>
-            <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-primaryBlue to-accentCyan">
+            <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-brandPrimary to-brandAccent">
               Progress Tracker
             </span>
           </div>
@@ -34,8 +34,8 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-all duration-300 relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-accentCyan after:transition-all after:duration-300 hover:after:w-full hover:text-accentCyan hover:-translate-y-0.5 ${
-                  location.pathname === link.path ? 'text-accentCyan after:w-full' : 'text-gray-300'
+                className={`text-sm font-medium transition-all duration-300 relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-brandAccent after:transition-all after:duration-300 hover:after:w-full hover:text-brandAccent hover:-translate-y-0.5 ${
+                  location.pathname === link.path ? 'text-brandAccent after:w-full' : 'text-gray-300'
                 }`}
               >
                 {link.name}
