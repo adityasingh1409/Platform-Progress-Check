@@ -74,4 +74,4 @@ Progress Tracker/
 ## Design Notes
 The application features a modern dark-mode aesthetic. 
 Technologies: **React, TailwindCSS, Vite, Node.js, Express, MongoDB**.
-Colors used: `darkBg` (`#0f172a`), `primaryBlue` (`#3b82f6`), and `accentCyan` (`#06b6d4`). Displays smooth hover animations, gradients and glassmorphic translucent layers for a premium state-of-the-art view..
+Colors used: `darkBg` (`#0f172a`), `primaryBlue` (`#3b82f6`), and `accentCyan` (`#06b6d4`). Displays smooth hover animations, gradients and glassmorphic translucent layers for a premium state-of-the-art view.. with differnt colors 
