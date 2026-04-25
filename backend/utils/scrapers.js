@@ -65,21 +65,17 @@ export const fetchGfgStats = async (profileUrl) => {
     const defaultStats = { total: 0, easy: 0, medium: 0, hard: 0 };
     if (!username) return defaultStats;
     try {
-        const response = await axios.get(`https://auth.geeksforgeeks.org/user/${username}/practice/`);
-        const $ = cheerio.load(response.data);
-        
-        let total = 0, easy = 0, medium = 0, hard = 0;
-        
-        const tabs = $('.tabs-content-container .active .problem-nav-links li, .nav-wrapper li, a[href*="#"]');
-        tabs.each((i, el) => {
-             const text = $(el).text();
-             if (text.includes('Easy')) easy = parseInt(text.match(/\d+/)?.[0] || '0', 10);
-             if (text.includes('Medium')) medium = parseInt(text.match(/\d+/)?.[0] || '0', 10);
-             if (text.includes('Hard')) hard = parseInt(text.match(/\d+/)?.[0] || '0', 10);
-        });
-        total = easy + medium + hard;
-        
-        return { total, easy, medium, hard };
+        const response = await axios.get(`https://geeks-for-geeks-stats-api.vercel.app/?raw=Y&userName=${username}`);
+        if (response.data && !response.data.error) {
+            const data = response.data;
+            return {
+                total: data.totalProblemsSolved || 0,
+                easy: data.Easy || 0,
+                medium: data.Medium || 0,
+                hard: data.Hard || 0
+            };
+        }
+        return defaultStats;
     } catch (err) {
         console.error('GFG fetch error:', err.message);
         return defaultStats;
