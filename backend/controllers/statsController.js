@@ -11,12 +11,18 @@ export const syncStats = async (req, res) => {
         const gfgStats = await fetchGfgStats(user.platforms?.gfg);
         const hackerrankStats = await fetchHackerrankStats(user.platforms?.hackerrank);
 
-        const totalSolved = leetcodeStats.total + gfgStats.total + hackerrankStats.total;
+        const totalSolved = leetcodeStats.total + gfgStats.total; // hackerrank removed from total
 
         const today = new Date().toISOString().split('T')[0];
 
+        // Find the most recent progress before today to calculate real progress
+        const previousProgress = await Progress.findOne({ user: user._id, date: { $lt: today } }).sort({ date: -1 });
+        const lastTotalSolved = previousProgress ? previousProgress.totalSolved : 0;
+
         let progress = await Progress.findOne({ user: user._id, date: today });
         if (progress) {
+            const alreadyEarnedPointToday = progress.totalSolved > lastTotalSolved;
+
             progress.leetcodeTotal = leetcodeStats.total;
             progress.leetcodeEasy = leetcodeStats.easy;
             progress.leetcodeMedium = leetcodeStats.medium;
@@ -34,6 +40,12 @@ export const syncStats = async (req, res) => {
             
             progress.totalSolved = totalSolved;
             await progress.save();
+
+            // Reward consistency if they solved a new problem and hadn't already been rewarded today
+            if (!alreadyEarnedPointToday && totalSolved > lastTotalSolved) {
+                user.consistencyScore += 1;
+                await user.save();
+            }
         } else {
             progress = new Progress({
                 user: user._id,
@@ -54,9 +66,11 @@ export const syncStats = async (req, res) => {
             });
             await progress.save();
             
-            // basic consistency logic: increment consistency
-            user.consistencyScore += 1;
-            await user.save();
+            // Increment if they solved a problem since yesterday/last sync, or if it's their very first sync ever and they have problems solved
+            if (totalSolved > lastTotalSolved || (!previousProgress && totalSolved > 0)) {
+                user.consistencyScore += 1;
+                await user.save();
+            }
         }
 
         res.status(200).json({ progress, consistencyScore: user.consistencyScore });
