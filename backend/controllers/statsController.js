@@ -1,79 +1,87 @@
 import Progress from '../models/Progress.js';
 import User from '../models/User.js';
-import { fetchLeetcodeStats, fetchGfgStats, fetchHackerrankStats } from '../utils/scrapers.js';
+import { fetchLeetcodeStats } from '../utils/leetcodeFetcher.js';
+import { fetchGithubStats } from '../utils/githubFetcher.js';
+import cache from '../utils/cache.js';
 
+const fetchAndUpdateUserStats = async (user) => {
+    // Check Cache first
+    const cacheKey = `stats_${user._id}`;
+    if (cache.has(cacheKey)) {
+        return cache.get(cacheKey);
+    }
+
+    const lcStats = await fetchLeetcodeStats(user.leetcodeUsername);
+    const ghStats = await fetchGithubStats(user.githubUsername);
+
+    const totalSolved = lcStats.total + ghStats.totalCommits; // Combined activity indicator
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Streak calculation (consecutive days where problems solved today > yesterday's count)
+    // Wait, the logic is easier: find yesterday's progress. 
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+
+    const yesterdayProgress = await Progress.findOne({ user: user._id, date: yesterdayStr });
+    const todayProgressBeforeUpdate = await Progress.findOne({ user: user._id, date: today });
+    
+    let previousTotal = yesterdayProgress ? yesterdayProgress.totalSolved : 0;
+    
+    // Calculate streak
+    let newStreak = yesterdayProgress ? yesterdayProgress.streak : 0;
+    if (totalSolved > previousTotal) {
+        // Did they already make progress today so we already counted it?
+        if (!todayProgressBeforeUpdate || todayProgressBeforeUpdate.totalSolved <= previousTotal) {
+            newStreak += 1;
+        }
+    } else if (todayProgressBeforeUpdate && todayProgressBeforeUpdate.totalSolved > previousTotal) {
+         // keep the streak from earlier today
+         newStreak = todayProgressBeforeUpdate.streak;
+    } else {
+        // lost streak
+        newStreak = 0;
+    }
+
+    let progress = todayProgressBeforeUpdate || new Progress({ user: user._id, date: today });
+    
+    progress.githubCommits = ghStats.totalCommits;
+    progress.lcEasy = lcStats.easy;
+    progress.lcMedium = lcStats.medium;
+    progress.lcHard = lcStats.hard;
+    progress.totalSolved = totalSolved;
+    progress.streak = newStreak;
+    
+    await progress.save();
+
+    const responseData = { progress, recentCommits: ghStats.recentCommits, contributions: ghStats.contributions };
+    cache.set(cacheKey, responseData);
+    return responseData;
+};
+
+// GET /stats/me
+export const getMyStats = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        
+        const data = await fetchAndUpdateUserStats(user);
+        res.status(200).json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error fetching your stats' });
+    }
+};
+
+// GET /stats/sync - manual override (clears cache)
 export const syncStats = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
-
-        const leetcodeStats = await fetchLeetcodeStats(user.platforms?.leetcode);
-        const gfgStats = await fetchGfgStats(user.platforms?.gfg);
-        const hackerrankStats = await fetchHackerrankStats(user.platforms?.hackerrank);
-
-        const totalSolved = leetcodeStats.total + gfgStats.total; // hackerrank removed from total
-
-        const today = new Date().toISOString().split('T')[0];
-
-        // Find the most recent progress before today to calculate real progress
-        const previousProgress = await Progress.findOne({ user: user._id, date: { $lt: today } }).sort({ date: -1 });
-        const lastTotalSolved = previousProgress ? previousProgress.totalSolved : 0;
-
-        let progress = await Progress.findOne({ user: user._id, date: today });
-        if (progress) {
-            const alreadyEarnedPointToday = progress.totalSolved > lastTotalSolved;
-
-            progress.leetcodeTotal = leetcodeStats.total;
-            progress.leetcodeEasy = leetcodeStats.easy;
-            progress.leetcodeMedium = leetcodeStats.medium;
-            progress.leetcodeHard = leetcodeStats.hard;
-            
-            progress.gfgTotal = gfgStats.total;
-            progress.gfgEasy = gfgStats.easy;
-            progress.gfgMedium = gfgStats.medium;
-            progress.gfgHard = gfgStats.hard;
-            
-            progress.hackerrankTotal = hackerrankStats.total;
-            progress.hackerrankEasy = hackerrankStats.easy;
-            progress.hackerrankMedium = hackerrankStats.medium;
-            progress.hackerrankHard = hackerrankStats.hard;
-            
-            progress.totalSolved = totalSolved;
-            await progress.save();
-
-            // Reward consistency if they solved a new problem and hadn't already been rewarded today
-            if (!alreadyEarnedPointToday && totalSolved > lastTotalSolved) {
-                user.consistencyScore += 1;
-                await user.save();
-            }
-        } else {
-            progress = new Progress({
-                user: user._id,
-                date: today,
-                leetcodeTotal: leetcodeStats.total,
-                leetcodeEasy: leetcodeStats.easy,
-                leetcodeMedium: leetcodeStats.medium,
-                leetcodeHard: leetcodeStats.hard,
-                gfgTotal: gfgStats.total,
-                gfgEasy: gfgStats.easy,
-                gfgMedium: gfgStats.medium,
-                gfgHard: gfgStats.hard,
-                hackerrankTotal: hackerrankStats.total,
-                hackerrankEasy: hackerrankStats.easy,
-                hackerrankMedium: hackerrankStats.medium,
-                hackerrankHard: hackerrankStats.hard,
-                totalSolved
-            });
-            await progress.save();
-            
-            // Increment if they solved a problem since yesterday/last sync, or if it's their very first sync ever and they have problems solved
-            if (totalSolved > lastTotalSolved || (!previousProgress && totalSolved > 0)) {
-                user.consistencyScore += 1;
-                await user.save();
-            }
-        }
-
-        res.status(200).json({ progress, consistencyScore: user.consistencyScore });
+        
+        cache.del(`stats_${user._id}`);
+        const data = await fetchAndUpdateUserStats(user);
+        res.status(200).json(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error while syncing stats' });
@@ -82,24 +90,32 @@ export const syncStats = async (req, res) => {
 
 export const getLeaderboard = async (req, res) => {
     try {
-        const users = await User.find().select('username consistencyScore').sort({ consistencyScore: -1 }).limit(20);
         const today = new Date().toISOString().split('T')[0];
-        const progressList = await Progress.find({ date: today }).populate('user', 'username consistencyScore');
-
-        // Merge total solved dynamically from today's progress document into the user payload
-        const formattedLeaderboard = users.map(u => {
-            const p = progressList.find(prog => prog.user._id.toString() === u._id.toString());
-            return {
-                ...u._doc,
-                totalProblemCount: p ? p.totalSolved : 0
-            };
-        });
-
-        // Re-sort by total problem count implicitly or just leave consistency
-        formattedLeaderboard.sort((a, b) => b.totalProblemCount - a.totalProblemCount || b.consistencyScore - a.consistencyScore);
-
-        res.status(200).json({ leaderboard: formattedLeaderboard, progress: progressList });
+        
+        // Find today's progress, sort by streak descending
+        const progressList = await Progress.find({ date: today })
+            .populate('user', 'username githubUsername leetcodeUsername')
+            .sort({ streak: -1 })
+            .limit(20);
+            
+        res.status(200).json({ leaderboard: progressList });
     } catch (error) {
         res.status(500).json({ message: 'Server error Fetching leaderboard' });
+    }
+};
+
+export const getPublicProfile = async (req, res) => {
+    try {
+        const username = req.params.username;
+        const user = await User.findOne({ username });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        
+        const data = await fetchAndUpdateUserStats(user);
+        res.status(200).json({
+            user: { username: user.username, githubUsername: user.githubUsername, leetcodeUsername: user.leetcodeUsername },
+            stats: data
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error fetching public profile' });
     }
 };

@@ -10,19 +10,12 @@ const ProgressSchema = new mongoose.Schema({
     type: String, // YYYY-MM-DD format
     required: true
   },
-  leetcodeTotal: { type: Number, default: 0 },
-  leetcodeEasy: { type: Number, default: 0 },
-  leetcodeMedium: { type: Number, default: 0 },
-  leetcodeHard: { type: Number, default: 0 },
-  gfgTotal: { type: Number, default: 0 },
-  gfgEasy: { type: Number, default: 0 },
-  gfgMedium: { type: Number, default: 0 },
-  gfgHard: { type: Number, default: 0 },
-  hackerrankTotal: { type: Number, default: 0 },
-  hackerrankEasy: { type: Number, default: 0 },
-  hackerrankMedium: { type: Number, default: 0 },
-  hackerrankHard: { type: Number, default: 0 },
-  totalSolved: { type: Number, default: 0 }
+  githubCommits: { type: Number, default: 0 },
+  lcEasy: { type: Number, default: 0 },
+  lcMedium: { type: Number, default: 0 },
+  lcHard: { type: Number, default: 0 },
+  totalSolved: { type: Number, default: 0 },
+  streak: { type: Number, default: 0 }
 }, { timestamps: true });
 
 // Ensure unique entry per user per day

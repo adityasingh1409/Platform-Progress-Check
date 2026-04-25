@@ -46,7 +46,8 @@ export const login = async (req, res) => {
                 id: user._id,
                 username: user.username,
                 email: user.email,
-                platforms: user.platforms
+                githubUsername: user.githubUsername,
+                leetcodeUsername: user.leetcodeUsername
             }
         });
     } catch (error) {
@@ -54,26 +55,21 @@ export const login = async (req, res) => {
     }
 };
 
-// Update Platforms
+// Update Usernames (replaces platforms)
 export const updatePlatforms = async (req, res) => {
     try {
-        const { leetcode, gfg, hackerrank } = req.body;
+        const { githubUsername, leetcodeUsername } = req.body;
         
-        const user = await User.findById(req.user.id);
+        const updateDoc = {};
+        if (githubUsername !== undefined) updateDoc.githubUsername = githubUsername;
+        if (leetcodeUsername !== undefined) updateDoc.leetcodeUsername = leetcodeUsername;
+        
+        const user = await User.findByIdAndUpdate(req.user.id, { $set: updateDoc }, { new: true });
         if (!user) return res.status(404).json({ message: 'User not found' });
-        
-        if (leetcode !== undefined) user.set('platforms.leetcode', leetcode);
-        if (gfg !== undefined) user.set('platforms.gfg', gfg);
-        if (hackerrank !== undefined) user.set('platforms.hackerrank', hackerrank);
-        
-        if (leetcode !== undefined || gfg !== undefined || hackerrank !== undefined) {
-            user.markModified('platforms');
-        }
 
-        await user.save();
-        res.status(200).json({ message: 'Platforms updated', platforms: user.platforms });
+        res.status(200).json({ message: 'Usernames updated', githubUsername: user.githubUsername, leetcodeUsername: user.leetcodeUsername });
     } catch (error) {
-        console.error('Update platforms error details:', error);
+        console.error('Update usernames error details:', error);
         res.status(500).json({ message: `Server error: ${error.message}` });
     }
 };

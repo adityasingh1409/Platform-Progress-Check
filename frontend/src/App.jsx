@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
+import PublicProfile from './pages/PublicProfile';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
             <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
             <Route path="/leaderboard" element={isAuthenticated ? <Leaderboard /> : <Navigate to="/login" />} />
+            <Route path="/u/:username" element={<PublicProfile />} />
             <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
           </Routes>
         </main>

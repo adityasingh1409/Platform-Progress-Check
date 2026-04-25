@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import { startCronJob } from './utils/cron.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => {
     console.log('Connected to MongoDB');
+    startCronJob();
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });

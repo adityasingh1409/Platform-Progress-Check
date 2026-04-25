@@ -35,12 +35,15 @@ export default function Leaderboard() {
               <th className="px-6 py-4 font-medium">Rank</th>
               <th className="px-6 py-4 font-medium">Username</th>
               <th className="px-6 py-4 text-right font-medium">Total Solved</th>
-              <th className="px-6 py-4 text-right font-medium">Consistency</th>
+              <th className="px-6 py-4 text-right font-medium">Streak</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800 hidden md:table-row-group" style={{display: 'table-row-group'}}>
-            {users.map((u, i) => (
-              <tr key={u._id} className="group hover:bg-gray-800/40 hover:scale-[1.01] transition-all duration-300 cursor-pointer">
+            {users.map((item, i) => {
+              const u = item.user;
+              if (!u) return null;
+              return (
+              <tr key={u._id || i} onClick={() => window.location.href = `/u/${u.username}`} className="group hover:bg-gray-800/40 hover:scale-[1.01] transition-all duration-300 cursor-pointer">
                 <td className="px-6 py-4 whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1">
                   {i === 0 ? <span className="text-2xl drop-shadow-md">🥇</span> : 
                    i === 1 ? <span className="text-2xl drop-shadow-md">🥈</span> : 
@@ -51,13 +54,13 @@ export default function Leaderboard() {
                   {u.username}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-green-400 group-hover:text-green-300 transition-colors">
-                  {u.totalProblemCount || 0}
+                  {item.totalSolved || 0}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-brandAccent group-hover:shadow-[0_0_10px_rgba(255,161,22,0.5)] group-hover:text-white transition-all rounded-md">
-                  {u.consistencyScore}
+                  {item.streak || 0} 🔥
                 </td>
               </tr>
-            ))}
+            )})}
             {users.length === 0 && (
               <tr>
                 <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
