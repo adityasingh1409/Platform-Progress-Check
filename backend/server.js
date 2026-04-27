@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import { startCronJob } from './utils/cron.js';
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 

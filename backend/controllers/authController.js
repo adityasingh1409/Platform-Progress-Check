@@ -47,7 +47,8 @@ export const login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 githubUsername: user.githubUsername,
-                leetcodeUsername: user.leetcodeUsername
+                leetcodeUsername: user.leetcodeUsername,
+                role: user.role
             }
         });
     } catch (error) {

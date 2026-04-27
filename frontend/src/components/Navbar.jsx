@@ -10,11 +10,18 @@ function Navbar() {
     window.location.href = '/login';
   };
 
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Leaderboard', path: '/leaderboard' },
     { name: 'Profile', path: '/profile' }
   ];
+
+  if (user && user.role === 'admin') {
+    navLinks.push({ name: 'Admin', path: '/admin' });
+  }
 
   return (
     <nav className="bg-darkCard shadow-lg border-b border-gray-800 sticky top-0 z-50">
