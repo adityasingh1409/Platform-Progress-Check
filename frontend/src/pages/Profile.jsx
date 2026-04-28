@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 export default function Profile() {
   const [platforms, setPlatforms] = useState({
@@ -49,11 +50,16 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <div className="text-white text-center mt-20">Loading...</div>;
+  if (loading) return <div className="text-gray-900 text-center mt-20">Loading...</div>;
 
   return (
-    <div className="flex justify-center mt-16 px-4">
-      <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl shadow-xl w-full max-w-lg border border-gray-800 hover:shadow-[0_10px_40px_-10px_rgba(44,187,93,0.2)] transition-all duration-300 transform hover:-translate-y-1">
+    <motion.div 
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center py-12 px-4"
+    >
+      <div className="bg-lightCard/80 backdrop-blur-md p-8 rounded-2xl shadow-xl w-full max-w-lg border border-gray-200 hover:shadow-[0_10px_40px_-10px_rgba(44,187,93,0.2)] transition-all duration-300 transform">
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brandPrimary to-brandAccent mb-6 text-center transition-all duration-300 hover:scale-105 hover:tracking-wide">
           Update Profile
         </h2>
@@ -63,10 +69,10 @@ export default function Profile() {
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div className="group">
-            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-brandAccent transition-colors">GitHub Username</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1 group-focus-within:text-brandAccent transition-colors">GitHub Username</label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-gray-900 hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
               placeholder="e.g. dev_ninja"
               value={platforms.githubUsername}
               onChange={(e) => setPlatforms({ ...platforms, githubUsername: e.target.value })}
@@ -74,10 +80,10 @@ export default function Profile() {
           </div>
 
           <div className="group">
-            <label className="block text-sm font-medium text-gray-400 mb-1 group-focus-within:text-brandAccent transition-colors">LeetCode Username</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1 group-focus-within:text-brandAccent transition-colors">LeetCode Username</label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-white hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-brandPrimary focus:border-transparent outline-none transition-all duration-300 placeholder-gray-600 text-gray-900 hover:border-gray-500 focus:-translate-y-1 focus:shadow-[0_10px_20px_-10px_rgba(44,187,93,0.3)]"
               placeholder="e.g. dev_ninja"
               value={platforms.leetcodeUsername}
               onChange={(e) => setPlatforms({ ...platforms, leetcodeUsername: e.target.value })}
@@ -86,12 +92,12 @@ export default function Profile() {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-brandPrimary to-brandAccent hover:from-green-600 hover:to-orange-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,161,22,0.4)] active:scale-95"
+            className="w-full py-3 px-4 rounded-lg shadow-lg text-sm font-medium text-gray-900 bg-gradient-to-r from-brandPrimary to-brandAccent hover:from-green-600 hover:to-orange-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,161,22,0.4)] active:scale-95"
           >
             Save Changes
           </button>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }

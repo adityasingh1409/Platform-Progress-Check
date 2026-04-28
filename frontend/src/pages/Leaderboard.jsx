@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 export default function Leaderboard() {
   const [users, setUsers] = useState([]);
@@ -19,44 +20,49 @@ export default function Leaderboard() {
     fetchLeaderboard();
   }, []);
 
-  if (loading) return <div className="text-white text-center mt-20">Loading...</div>;
+  if (loading) return <div className="text-gray-900 text-center mt-20">Loading...</div>;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      className="p-8 max-w-5xl mx-auto"
+    >
       <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brandPrimary to-brandAccent mb-2 text-center">
         Global Leaderboard
       </h1>
-      <p className="text-gray-400 text-center mb-10">Top users globally.</p>
+      <p className="text-gray-600 text-center mb-10">Top users globally.</p>
       
-      <div className="bg-darkCard/80 backdrop-blur-md rounded-2xl border border-gray-800 shadow-xl overflow-hidden hover:shadow-[0_10px_30px_-10px_rgba(44,187,93,0.2)] transition-all duration-300">
+      <div className="bg-lightCard/80 backdrop-blur-md rounded-2xl border border-gray-200 shadow-xl overflow-hidden hover:shadow-[0_10px_30px_-10px_rgba(44,187,93,0.2)] transition-all duration-300">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-800/50 text-gray-400 text-sm uppercase tracking-wider">
+            <tr className="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
               <th className="px-6 py-4 font-medium">Rank</th>
               <th className="px-6 py-4 font-medium">Username</th>
               <th className="px-6 py-4 text-right font-medium">Total Solved</th>
               <th className="px-6 py-4 text-right font-medium">Streak</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800 hidden md:table-row-group" style={{display: 'table-row-group'}}>
+          <tbody className="divide-y divide-gray-200 hidden md:table-row-group" style={{display: 'table-row-group'}}>
             {users.map((item, i) => {
               const u = item.user;
               if (!u) return null;
               return (
-              <tr key={u._id || i} onClick={() => window.location.href = `/u/${u.username}`} className="group hover:bg-gray-800/40 hover:scale-[1.01] transition-all duration-300 cursor-pointer">
+              <tr key={u._id || i} onClick={() => window.location.href = `/u/${u.username}`} className="group hover:bg-gray-100 hover:scale-[1.01] transition-all duration-300 cursor-pointer">
                 <td className="px-6 py-4 whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1">
                   {i === 0 ? <span className="text-2xl drop-shadow-md">🥇</span> : 
                    i === 1 ? <span className="text-2xl drop-shadow-md">🥈</span> : 
                    i === 2 ? <span className="text-2xl drop-shadow-md">🥉</span> : 
-                   <span className="text-gray-500 font-bold px-2 group-hover:text-white transition-colors">{i + 1}</span>}
+                   <span className="text-gray-500 font-bold px-2 group-hover:text-gray-900 transition-colors">{i + 1}</span>}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-white font-medium group-hover:text-brandAccent transition-colors duration-300">
+                <td className="px-6 py-4 whitespace-nowrap text-gray-900 font-medium group-hover:text-brandAccent transition-colors duration-300">
                   {u.username}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-green-400 group-hover:text-green-300 transition-colors">
                   {item.totalSolved || 0}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-brandAccent group-hover:shadow-[0_0_10px_rgba(255,161,22,0.5)] group-hover:text-white transition-all rounded-md">
+                <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-brandAccent group-hover:shadow-[0_0_10px_rgba(255,161,22,0.5)] group-hover:text-gray-900 transition-all rounded-md">
                   {item.streak || 0} 🔥
                 </td>
               </tr>
@@ -71,6 +77,6 @@ export default function Leaderboard() {
           </tbody>
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 }

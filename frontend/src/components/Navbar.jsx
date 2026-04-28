@@ -13,18 +13,19 @@ function Navbar() {
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
 
-  const navLinks = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Leaderboard', path: '/leaderboard' },
-    { name: 'Profile', path: '/profile' }
-  ];
-
+  const navLinks = [];
+  
   if (user && user.role === 'admin') {
-    navLinks.push({ name: 'Admin', path: '/admin' });
+    navLinks.push({ name: 'Dashboard', path: '/admin' });
+    navLinks.push({ name: 'Leaderboard', path: '/leaderboard' });
+  } else {
+    navLinks.push({ name: 'Dashboard', path: '/dashboard' });
+    navLinks.push({ name: 'Leaderboard', path: '/leaderboard' });
+    navLinks.push({ name: 'Profile', path: '/profile' });
   }
 
   return (
-    <nav className="bg-darkCard shadow-lg border-b border-gray-800 sticky top-0 z-50">
+    <nav className="bg-lightCard shadow-lg border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2 group cursor-pointer">
@@ -42,7 +43,7 @@ function Navbar() {
                 key={link.name}
                 to={link.path}
                 className={`text-sm font-medium transition-all duration-300 relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-brandAccent after:transition-all after:duration-300 hover:after:w-full hover:text-brandAccent hover:-translate-y-0.5 ${
-                  location.pathname === link.path ? 'text-brandAccent after:w-full' : 'text-gray-300'
+                  location.pathname === link.path ? 'text-brandAccent after:w-full' : 'text-gray-700'
                 }`}
               >
                 {link.name}

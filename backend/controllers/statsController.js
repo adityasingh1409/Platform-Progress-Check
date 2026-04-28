@@ -90,15 +90,23 @@ export const syncStats = async (req, res) => {
 
 export const getLeaderboard = async (req, res) => {
     try {
-        const today = new Date().toISOString().split('T')[0];
+        const users = await User.find({}).select('username githubUsername leetcodeUsername');
+        const progressList = [];
         
-        // Find today's progress, sort by streak descending
-        const progressList = await Progress.find({ date: today })
-            .populate('user', 'username githubUsername leetcodeUsername')
-            .sort({ streak: -1 })
-            .limit(20);
+        for (const user of users) {
+            const latestProgress = await Progress.findOne({ user: user._id }).sort({ date: -1 });
+            if (latestProgress) {
+                progressList.push({
+                    ...latestProgress.toObject(),
+                    user: user.toObject()
+                });
+            }
+        }
+        
+        // Sort by totalSolved descending
+        progressList.sort((a, b) => b.totalSolved - a.totalSolved);
             
-        res.status(200).json({ leaderboard: progressList });
+        res.status(200).json({ leaderboard: progressList.slice(0, 20) });
     } catch (error) {
         res.status(500).json({ message: 'Server error Fetching leaderboard' });
     }

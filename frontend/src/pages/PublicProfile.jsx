@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { GitHubCalendar } from 'react-github-calendar';
+import { motion } from 'framer-motion';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -57,10 +58,15 @@ export default function PublicProfile() {
     ],
   };
 
-  if (loading) return <div className="text-white text-center mt-20">Loading public profile...</div>;
+  if (loading) return <div className="text-gray-900 text-center mt-20">Loading public profile...</div>;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-8 max-w-7xl mx-auto space-y-8"
+    >
       {error ? (
           <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-center">
               {error}
@@ -68,24 +74,26 @@ export default function PublicProfile() {
       ) : targetUser && stats ? (
         <>
           <div className="flex flex-col items-center justify-center text-center">
-              <div className="w-24 h-24 bg-gradient-to-r from-brandPrimary to-brandAccent rounded-full flex items-center justify-center text-4xl text-white font-bold mb-4 shadow-[0_0_20px_rgba(44,187,93,0.4)]">
+              <div className="w-24 h-24 bg-gradient-to-r from-brandPrimary to-brandAccent rounded-full flex items-center justify-center text-4xl text-gray-900 font-bold mb-4 shadow-[0_0_20px_rgba(44,187,93,0.4)]">
                 {targetUser.username.charAt(0).toUpperCase()}
               </div>
               <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                 {targetUser.username}
               </h1>
-              <p className="text-brandAccent mt-2 font-medium text-lg text-center">Current Streak: <span className="font-bold text-white">{stats.streak || 0} 🔥</span></p>
+              <p className="text-brandAccent mt-2 font-medium text-lg text-center">Current Streak: <span className="font-bold text-gray-900">{stats.streak || 0} 🔥</span></p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[ 
-              { name: 'Total Solved', val: stats.totalSolved || 0, color: 'text-white' },
-              { name: 'LeetCode Easy', val: stats.lcEasy || 0, color: 'text-green-400' },
-              { name: 'LeetCode Medium', val: stats.lcMedium || 0, color: 'text-orange-400' },
-              { name: 'GitHub Commits', val: stats.githubCommits || 0, color: 'text-brandAccent' }
+              { name: 'Total LeetCode', val: (stats.lcEasy || 0) + (stats.lcMedium || 0) + (stats.lcHard || 0), color: 'text-gray-900' },
+              { name: 'LC Easy', val: stats.lcEasy || 0, color: 'text-green-600' },
+              { name: 'LC Medium', val: stats.lcMedium || 0, color: 'text-orange-500' },
+              { name: 'LC Hard', val: stats.lcHard || 0, color: 'text-red-500' },
+              { name: 'GitHub Commits', val: stats.githubCommits || 0, color: 'text-brandAccent' },
+              { name: 'Total Activity', val: stats.totalSolved || 0, color: 'text-brandPrimary' }
             ].map((diff) => (
-              <div key={diff.name} className="group bg-darkCard/80 backdrop-blur-md p-6 rounded-2xl border border-gray-800 shadow-xl flex flex-col justify-center items-center">
-                <h3 className="text-gray-400 text-xs sm:text-sm font-semibold uppercase mb-2">{diff.name}</h3>
+              <div key={diff.name} className="group bg-lightCard/80 backdrop-blur-md p-6 rounded-2xl border border-gray-200 shadow-xl flex flex-col justify-center items-center">
+                <h3 className="text-gray-600 text-xs sm:text-sm font-semibold uppercase mb-2">{diff.name}</h3>
                 <p className={`text-4xl font-extrabold ${diff.color}`}>
                   {diff.val}
                 </p>
@@ -95,21 +103,21 @@ export default function PublicProfile() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* LeetCode Ring */}
-              <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-800 shadow-xl flex flex-col items-center">
-                  <h2 className="text-xl font-bold text-white mb-6">Problems Distribution</h2>
+              <div className="bg-lightCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-200 shadow-xl flex flex-col items-center">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Problems Distribution</h2>
                   <div className="w-64 h-64">
                     <Doughnut data={chartData} options={{ maintainAspectRatio: false }} />
                   </div>
               </div>
 
               {/* Recent Commits */}
-              <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-800 shadow-xl flex flex-col">
-                  <h2 className="text-xl font-bold text-white mb-4">Recent Commits</h2>
+              <div className="bg-lightCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-200 shadow-xl flex flex-col">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Commits</h2>
                   <div className="space-y-4 overflow-y-auto max-h-64 pr-2">
                       {data.stats.recentCommits && data.stats.recentCommits.length > 0 ? (
                           data.stats.recentCommits.map((c, i) => (
                               <div key={i} className="border-l-2 border-brandPrimary pl-4">
-                                  <p className="text-white text-sm font-medium">{c.message}</p>
+                                  <p className="text-gray-900 text-sm font-medium">{c.message}</p>
                                   <p className="text-xs text-gray-500 mt-1">{c.repo} • {new Date(c.date).toLocaleDateString()}</p>
                               </div>
                           ))
@@ -122,15 +130,15 @@ export default function PublicProfile() {
 
           {/* GitHub Heatmap */}
           {targetUser.githubUsername && (
-              <div className="bg-darkCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-800 shadow-xl">
-                  <h2 className="text-xl font-bold text-white mb-6">GitHub Contributions</h2>
-                  <div className="flex justify-center overflow-x-auto text-white">
-                      <GitHubCalendar username={targetUser.githubUsername} colorScheme="dark" />
+              <div className="bg-lightCard/80 backdrop-blur-md p-8 rounded-2xl border border-gray-200 shadow-xl">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">GitHub Contributions</h2>
+                  <div className="flex justify-center overflow-x-auto text-gray-900">
+                      <GitHubCalendar username={targetUser.githubUsername} colorScheme="light" />
                   </div>
               </div>
           )}
         </>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
